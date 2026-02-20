@@ -78,7 +78,8 @@ async def template_items_keyboard(
         select=["weekday", "time", "participant_limit"],
         where={"id": template_id},
     )
-    # А может ли придти пустой датафрейм?
+    # А может ли придти пустой датафрейм.
+    # По идее нет, т.к. мы выбрали до этого существующее занятие из базы.
     row = templates_df.loc[0]
     buttons = [
         InlineKeyboardButton(

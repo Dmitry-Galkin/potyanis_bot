@@ -119,8 +119,8 @@ async def choose_new_weekday(callback: CallbackQuery, state: FSMContext):
         f"_макс._ {edit_info['old_participant_limit']} чел\n"
     )
     text += (
-        f"*Стало*: {WEEKDAY_NAME_MAPPING[edit_info['new_weekday']]}: {edit_info['old_time']}, "
-        f"_макс._ {edit_info['old_participant_limit']} чел\n"
+        f"*Стало*: {WEEKDAY_NAME_MAPPING[edit_info['new_weekday']]}: {edit_info['new_time']}, "
+        f"_макс._ {edit_info['new_participant_limit']} чел\n"
     )
     await callback.message.edit_text(
         text=text, parse_mode="markdown", reply_markup=confirm_keyboard()

@@ -106,7 +106,7 @@ def get_query_existed_sessions(
 
 
 def get_query_free_spaces(
-    db_config: DataBaseSettings, weekday: int, time: str
+    db_config: DataBaseSettings, session_id: int,
 ) -> Tuple[str, Tuple[Any, ...]]:
     query = f"""
         SELECT
@@ -118,15 +118,14 @@ def get_query_free_spaces(
         LEFT JOIN 
             {db_config.table_templates} t3 ON t2.template_id = t3.id
         WHERE
-            t3.time = ?
-            AND t3.weekday = ?
+            t2.id = ?
             AND t3.is_actual = True
-            AND t2.is_actual = TRUE
+            AND t2.is_actual = True
             AND t1.is_canceled = False
         GROUP BY
             t3.participant_limit
     """
-    parameters = (time, weekday)
+    parameters = (session_id, )
     return query, parameters
 
 
@@ -210,8 +209,7 @@ async def choose_session(callback: CallbackQuery, state: FSMContext, **kwargs):
     db_config = kwargs["config"].db
     query, parameters = get_query_free_spaces(
         db_config=db_config,
-        weekday=int(weekday),
-        time=time,
+        session_id=int(session_id),
     )
     reg_df = await table_select(
         db_path=db_config.path, query=query, parameters=parameters
