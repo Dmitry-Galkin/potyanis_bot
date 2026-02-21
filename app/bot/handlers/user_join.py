@@ -106,7 +106,8 @@ def get_query_existed_sessions(
 
 
 def get_query_free_spaces(
-    db_config: DataBaseSettings, session_id: int,
+    db_config: DataBaseSettings,
+    session_id: int,
 ) -> Tuple[str, Tuple[Any, ...]]:
     query = f"""
         SELECT
@@ -125,7 +126,7 @@ def get_query_free_spaces(
         GROUP BY
             t3.participant_limit
     """
-    parameters = (session_id, )
+    parameters = (session_id,)
     return query, parameters
 
 

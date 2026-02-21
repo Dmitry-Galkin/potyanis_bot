@@ -15,9 +15,7 @@ def _user_str(event: TelegramObject) -> str:
     first = getattr(user, "first_name", None) or ""
     last = getattr(user, "last_name", None) or ""
     username = getattr(user, "username", None) or ""
-    return (
-        f"id={user.id} first_name={first!r} last_name={last!r} username={username!r}"
-    )
+    return f"id={user.id} first_name={first!r} last_name={last!r} username={username!r}"
 
 
 def _action_str(event: TelegramObject) -> str:

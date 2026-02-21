@@ -41,3 +41,16 @@ class IsAdminOrUser(BaseFilter):
         return await get_user_role(
             _user_id_from_event(event), self.bot, self.bot_config
         ) in (UserRole.USER, UserRole.ADMIN)
+
+
+class IsGuest(BaseFilter):
+    """Пользователь не админ и не в группе."""
+
+    def __init__(self, bot: Bot, bot_config: BotSettings) -> None:
+        self.bot = bot
+        self.bot_config = bot_config
+
+    async def __call__(self, event: Message | CallbackQuery) -> bool:
+        return UserRole.GUEST == await get_user_role(
+            _user_id_from_event(event), self.bot, self.bot_config
+        )
