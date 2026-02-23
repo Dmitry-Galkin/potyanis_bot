@@ -165,8 +165,12 @@ async def show_all_bookings(message: Message, **kwargs):
             for i, row in df.iterrows():
                 text += f"{i + 1}) {row.first_name} {row.last_name} (@{row.username})\n"
             delta = participant_limit - df.shape[0]
-            if delta > 0:
+            if delta == 1:
+                text += hbold(f"Осталось {delta} место 🔥\n")
+            elif 2 <= delta <= 4:
                 text += hbold(f"Осталось {delta} места 🔥\n")
+            elif delta >= 5:
+                text += hbold(f"Осталось {delta} мест 🔥\n")
             else:
                 text += f"Полная запись 🔥\n"
             text += "\n"
