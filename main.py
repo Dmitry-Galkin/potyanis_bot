@@ -14,13 +14,13 @@ from app.db.schema import init_all_tables
 
 # Логирование действий пользователей в терминал: время, id, first_name, last_name, username, команда.
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.ERROR,
     format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
     stream=sys.stdout,
 )
 logger_actions = logging.getLogger("user_actions")
-logger_actions.setLevel(logging.INFO)
+logger_actions.setLevel(logging.ERROR)
 
 config = load_config(path_env=".env", path_yaml="config.yaml")
 BOT_TOKEN = config.bot.token
