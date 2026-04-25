@@ -23,11 +23,21 @@ def main_admin_keyboard(width: int = 1) -> InlineKeyboardMarkup:
         text="Посмотреть записи на день/период",
         callback_data="view_bookings_by_period",
     )
+    button_add_days_off = InlineKeyboardButton(
+        text="Добавить отпуск",
+        callback_data="add_days_off",
+    )
+    button_remove_days_off = InlineKeyboardButton(
+        text="Отменить отпуск",
+        callback_data="remove_days_off",
+    )
     buttons = [
         button_add_template,
         button_remove_template,
         button_update_template,
         button_view_bookings_by_period,
+        button_add_days_off,
+        button_remove_days_off,
     ]
     kb_builder = InlineKeyboardBuilder()
     kb_builder.row(*buttons, width=width)
