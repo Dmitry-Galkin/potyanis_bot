@@ -117,6 +117,11 @@ async def enter_period(message: Message, state: FSMContext, **kwargs):
             return
     if len(dates) == 1:
         dates.append(dates[0])
+    if pd.Timestamp(dates[0]) > pd.Timestamp(dates[1]):
+        await message.answer(
+            f"❌ Неправильный порядок дат. Вторая дата должна быть больше."
+        )
+        return
     await state.update_data(date_off_start=dates[0])
     await state.update_data(date_off_end=dates[1])
     await message.answer(
