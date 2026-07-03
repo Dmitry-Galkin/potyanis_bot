@@ -5,6 +5,7 @@ aiohttp==3.13.3
 aiosignal==1.4.0
 aiosqlite==0.22.1
 annotated-types==0.7.0
+apscheduler==3.11.3
 attrs==25.4.0
 black==26.1.0
 certifi==2026.1.4

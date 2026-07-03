@@ -13,3 +13,6 @@ time:
 redis:
   state_ttl_seconds: 30
   data_ttl_seconds: 30
+reminder:
+  lead_minutes: 1440
+  poll_interval_minutes: 1

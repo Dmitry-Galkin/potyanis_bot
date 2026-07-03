@@ -41,6 +41,7 @@ class Config:
     booking: BookingSettings
     time: TimeSettings
     redis: RedisSettings
+    reminder: ReminderSettings
 
 
 @dataclass
@@ -49,10 +50,17 @@ class RedisSettings:
     data_ttl_seconds: int
 
 
+@dataclass
+class ReminderSettings:
+    lead_minutes: int
+    poll_interval_minutes: int
+
+
 db_schema = class_schema(DataBaseSettings)()
 booking_schema = class_schema(BookingSettings)()
 time_schema = class_schema(TimeSettings)()
 redis_schema = class_schema(RedisSettings)()
+reminder_schema = class_schema(ReminderSettings)()
 
 
 def load_config(path_env: str, path_yaml: str) -> Config:
@@ -72,6 +80,7 @@ def load_config(path_env: str, path_yaml: str) -> Config:
         booking=booking_schema.load(params["booking"]),
         time=time_schema.load(params["time"]),
         redis=redis_schema.load(params["redis"]),
+        reminder=reminder_schema.load(params["reminder"]),
     )
 
     return config
