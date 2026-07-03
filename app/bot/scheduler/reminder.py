@@ -41,11 +41,20 @@ async def send_class_reminders(bot: Bot, config: Config) -> None:
         query=query,
         parameters=(now, upper),
     )
-    # Шлем сообщения.
+    # Преобразуем в более удобный формат для случая,
+    # когда один пользователь записан более одного раза.
+    bookings = {}
     for _, row in registrations.iterrows():
+        key = (int(row["tg_id"]), str(row["session_datetime"]))
+        if key in bookings:
+            bookings[key].append(int(row.registration_id))
+        else:
+            bookings[key] = [int(row.registration_id)]
+    # Шлем сообщения.
+    for (tg_id, session_datetime), registration_ids in bookings.items():
         try:
             session_time = (
-                pd.Timestamp(row.session_datetime)
+                pd.Timestamp(session_datetime)
                 .tz_localize(UTC)
                 .tz_convert(config.time.local_timezone)
                 .time()
@@ -54,16 +63,18 @@ async def send_class_reminders(bot: Bot, config: Config) -> None:
                 session_time.minute
             ).zfill(2)
             await bot.send_message(
-                chat_id=int(row["tg_id"]),
+                chat_id=tg_id,
                 text=f"Напоминаю: сегодня вы записаны на занятия по йоге в {hour}:{minute}."
                 f"\nЖдем вас 🧘",
             )
-            # Сразу запишем, что пользователь оповещен.
-            await table_update(
-                db_path=config.db.path,
-                table=config.db.table_registrations,
-                where={"id": int(row["registration_id"])},
-                values={"is_reminded": 1},
-            )
         except (TelegramForbiddenError, TelegramBadRequest):
             pass  # заблокировал бота / чат недоступен
+        # Сразу запишем, что пользователь оповещен.
+        # Сделаем это даже для пользователя, которому не смогли отправить сообщение.
+        # Скорее всего, у него в настройках стоит запрет и будет бессмысленно пытаться доставить.
+        await table_update(
+            db_path=config.db.path,
+            table=config.db.table_registrations,
+            where=f"id IN {tuple(registration_ids)}",
+            values={"is_reminded": 1},
+        )

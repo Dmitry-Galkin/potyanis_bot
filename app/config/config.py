@@ -35,16 +35,6 @@ class TimeSettings:
 
 
 @dataclass
-class Config:
-    bot: BotSettings
-    db: DataBaseSettings
-    booking: BookingSettings
-    time: TimeSettings
-    redis: RedisSettings
-    reminder: ReminderSettings
-
-
-@dataclass
 class RedisSettings:
     state_ttl_seconds: int
     data_ttl_seconds: int
@@ -54,6 +44,16 @@ class RedisSettings:
 class ReminderSettings:
     lead_minutes: int
     poll_interval_minutes: int
+
+
+@dataclass
+class Config:
+    bot: BotSettings
+    db: DataBaseSettings
+    booking: BookingSettings
+    time: TimeSettings
+    redis: RedisSettings
+    reminder: ReminderSettings
 
 
 db_schema = class_schema(DataBaseSettings)()
