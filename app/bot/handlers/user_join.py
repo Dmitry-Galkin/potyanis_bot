@@ -189,7 +189,6 @@ class FSMJoinSession(StatesGroup):
     Command(commands="join"),
     StateFilter(default_state),
 )
-# TODO: добавить фильтр, кто может делать.
 async def start_join_session(message: Message, state: FSMContext, **kwargs):
     # Текущее время
     now = get_datetime_now_utc()
