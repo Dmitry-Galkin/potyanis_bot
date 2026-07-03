@@ -122,6 +122,7 @@ def query_init_table_registrations(*args) -> str:
             is_canceled BOOLEAN NOT NULL,
             created_at TEXT NOT NULL,
             corrected_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            is_reminded BOOLEAN NOT NULL DEFAULT 0,
             FOREIGN KEY (user_id) REFERENCES {referenced_table_users} (id),
             FOREIGN KEY (session_id) REFERENCES {referenced_table_sessions} (id)
         )
