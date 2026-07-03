@@ -10,3 +10,6 @@ booking:
   window_days: 14
 time:
   local_timezone: "Europe/Moscow"
+redis:
+  state_ttl_seconds: 30
+  data_ttl_seconds: 30

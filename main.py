@@ -1,9 +1,13 @@
 import asyncio
+import json
 import logging
 import sys
+from functools import partial
 
+import numpy as np
 from aiogram import Bot, Dispatcher
-from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.fsm.storage.redis import RedisStorage
+from redis.asyncio.client import Redis
 
 from app.bot.filters import IsAdmin, IsAdminOrUser, IsGuest
 from app.bot.handlers import admin_router, common_router, guest_router, user_router
@@ -11,6 +15,18 @@ from app.bot.interface.interface import setup_commands
 from app.bot.middlewares import ConfigMiddleware, LoggingMiddleware
 from app.config.config import load_config
 from app.db.schema import init_all_tables
+
+
+def _default(o):
+    """Заглушка для redis, на случай, если придет не сериализуемый тип."""
+    if isinstance(o, np.integer):
+        return int(o)
+    if isinstance(o, np.floating):
+        return float(o)
+    if isinstance(o, np.ndarray):
+        return o.tolist()
+    raise TypeError(f"Object of type {o.__class__.__name__} is not JSON serializable")
+
 
 # Логирование действий пользователей в терминал: время, id, first_name, last_name, username, команда.
 logging.basicConfig(
@@ -24,7 +40,14 @@ logger_actions.setLevel(logging.ERROR)
 
 config = load_config(path_env=".env", path_yaml="config.yaml")
 BOT_TOKEN = config.bot.token
-storage = MemoryStorage()
+
+redis = Redis(host="127.0.0.1")  # Натыкался, что с localhost медленнее работает.
+storage = RedisStorage(
+    redis=redis,
+    state_ttl=config.redis.state_ttl_seconds,
+    data_ttl=config.redis.data_ttl_seconds,
+    json_dumps=partial(json.dumps, default=_default),
+)
 
 # Создаем объекты бота и диспетчера.
 bot = Bot(token=BOT_TOKEN)
