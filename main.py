@@ -13,7 +13,9 @@ from app.bot.filters import IsAdmin, IsAdminOrUser, IsGuest
 from app.bot.handlers import admin_router, common_router, guest_router, user_router
 from app.bot.interface.interface import setup_commands
 from app.bot.middlewares import ConfigMiddleware, LoggingMiddleware
+from app.bot.scheduler import setup_scheduler
 from app.config.config import load_config
+from app.db import migrate
 from app.db.schema import init_all_tables
 
 
@@ -79,6 +81,9 @@ dp.include_routers(admin_router, common_router, user_router, guest_router)
 async def main():
     await setup_commands(bot, bot_config=config.bot)
     await init_all_tables(db_config=config.db)
+    # Миграция БД.
+    await migrate(db_config=config.db)
+    _ = setup_scheduler(bot, config)
     await dp.start_polling(bot)
 
 
