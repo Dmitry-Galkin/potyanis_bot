@@ -14,7 +14,7 @@ async def get_user_info(db_config: DataBaseSettings, tg_id: int) -> Dict[str, An
     )
     user_info = {}
     if not user_df.empty:
-        user_info["tg_id"] = user_df.at[0, "tg_id"]
+        user_info["tg_id"] = int(user_df.at[0, "tg_id"])
         user_info["first_name"] = user_df.at[0, "first_name"]
         user_info["last_name"] = user_df.at[0, "last_name"]
         user_info["username"] = user_df.at[0, "username"]

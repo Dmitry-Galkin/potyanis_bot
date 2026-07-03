@@ -40,11 +40,19 @@ class Config:
     db: DataBaseSettings
     booking: BookingSettings
     time: TimeSettings
+    redis: RedisSettings
+
+
+@dataclass
+class RedisSettings:
+    state_ttl_seconds: int
+    data_ttl_seconds: int
 
 
 db_schema = class_schema(DataBaseSettings)()
 booking_schema = class_schema(BookingSettings)()
 time_schema = class_schema(TimeSettings)()
+redis_schema = class_schema(RedisSettings)()
 
 
 def load_config(path_env: str, path_yaml: str) -> Config:
@@ -63,6 +71,7 @@ def load_config(path_env: str, path_yaml: str) -> Config:
         db=db_schema.load(params["db"]),
         booking=booking_schema.load(params["booking"]),
         time=time_schema.load(params["time"]),
+        redis=redis_schema.load(params["redis"]),
     )
 
     return config
