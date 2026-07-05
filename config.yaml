@@ -11,6 +11,8 @@ booking:
 time:
   local_timezone: "Europe/Moscow"
 redis:
+  host: "redis"
+  port: 6379
   state_ttl_seconds: 1200
   data_ttl_seconds: 1200
 reminder:

@@ -36,6 +36,8 @@ class TimeSettings:
 
 @dataclass
 class RedisSettings:
+    host: str
+    port: int
     state_ttl_seconds: int
     data_ttl_seconds: int
 
