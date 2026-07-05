@@ -16,3 +16,8 @@ redis:
 reminder:
   lead_minutes: 1440
   poll_interval_minutes: 1
+wisdom:
+  url: "https://api.deepseek.com"
+  model: "deepseek-v4-flash"
+  send_hour: 13
+  send_minute: 33
