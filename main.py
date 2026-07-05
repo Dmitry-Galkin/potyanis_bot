@@ -43,7 +43,7 @@ logger_actions.setLevel(logging.ERROR)
 config = load_config(path_env=".env", path_yaml="config.yaml")
 BOT_TOKEN = config.bot.token
 
-redis = Redis(host="127.0.0.1")  # Натыкался, что с localhost медленнее работает.
+redis = Redis(host=config.redis.host, port=config.redis.port)
 storage = RedisStorage(
     redis=redis,
     state_ttl=config.redis.state_ttl_seconds,

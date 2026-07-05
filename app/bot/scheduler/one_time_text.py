@@ -20,7 +20,7 @@ ONE_TIME_TEXT = (
     "Но завтра обязательно наверстаю.\n\n🧘‍♂️"
 )
 
-RUN_TIME_DATE = "2026-07-05 21:00:00"
+RUN_TIME_DATE = "2026-07-05 21:45:00"
 
 
 async def send_one_time_text(bot: Bot, config: Config) -> None:
