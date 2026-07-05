@@ -47,6 +47,15 @@ class ReminderSettings:
 
 
 @dataclass
+class WisdomSettings:
+    url: str
+    model: str
+    send_hour: int
+    send_minute: int
+    api_key: str
+
+
+@dataclass
 class Config:
     bot: BotSettings
     db: DataBaseSettings
@@ -54,6 +63,7 @@ class Config:
     time: TimeSettings
     redis: RedisSettings
     reminder: ReminderSettings
+    wisdom: WisdomSettings
 
 
 db_schema = class_schema(DataBaseSettings)()
@@ -61,6 +71,7 @@ booking_schema = class_schema(BookingSettings)()
 time_schema = class_schema(TimeSettings)()
 redis_schema = class_schema(RedisSettings)()
 reminder_schema = class_schema(ReminderSettings)()
+wisdom_schema = class_schema(WisdomSettings)()
 
 
 def load_config(path_env: str, path_yaml: str) -> Config:
@@ -70,9 +81,12 @@ def load_config(path_env: str, path_yaml: str) -> Config:
     token = env("BOT_TOKEN")
     group_id = int(env("GROUP_ID"))
     admin_ids = [int(idx) for idx in env.list("ADMIN_IDS", default=[])]
+    wisdom_api_key = env("DEEPSEEK_API_KEY")
 
     with open(path_yaml, "r") as input_stream:
         params = yaml.safe_load(input_stream)
+
+    wisdom_params = params["wisdom"]
 
     config = Config(
         bot=BotSettings(token=token, group_id=group_id, admin_ids=admin_ids),
@@ -81,6 +95,13 @@ def load_config(path_env: str, path_yaml: str) -> Config:
         time=time_schema.load(params["time"]),
         redis=redis_schema.load(params["redis"]),
         reminder=reminder_schema.load(params["reminder"]),
+        wisdom=WisdomSettings(
+            url=wisdom_params["url"],
+            model=wisdom_params["model"],
+            send_hour=wisdom_params["send_hour"],
+            send_minute=wisdom_params["send_minute"],
+            api_key=wisdom_api_key,
+        ),
     )
 
     return config
