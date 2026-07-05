@@ -72,9 +72,13 @@ async def send_class_reminders(bot: Bot, config: Config) -> None:
         # Сразу запишем, что пользователь оповещен.
         # Сделаем это даже для пользователя, которому не смогли отправить сообщение.
         # Скорее всего, у него в настройках стоит запрет и будет бессмысленно пытаться доставить.
+        if len(registration_ids) > 1:
+            _where = f"id IN {tuple(registration_ids)}"
+        else:
+            _where = f"id = {registration_ids[0]}"
         await table_update(
             db_path=config.db.path,
             table=config.db.table_registrations,
-            where=f"id IN {tuple(registration_ids)}",
+            where=_where,
             values={"is_reminded": 1},
         )
