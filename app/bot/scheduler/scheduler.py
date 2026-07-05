@@ -1,7 +1,8 @@
 from aiogram import Bot
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from app.bot.scheduler import send_class_reminders, send_daily_wisdom
+from app.bot.scheduler.reminder import send_class_reminders
+from app.bot.scheduler.wisdom import send_daily_wisdom
 from app.config import Config
 
 

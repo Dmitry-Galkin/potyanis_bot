@@ -19,9 +19,9 @@ async def send_daily_wisdom(bot: Bot, config: Config) -> None:
         logger.error("Провайдер вернул пустой текст мудрости")
         return
     try:
-        text = "🧘‍♂️Время для интересных фактов или просто пофилософстовать\n\n"
+        text = "🧘‍♂️Время для интересных фактов или просто пофилософствовать\n\n"
         text += wisdom_text
-        text += "\n\nPS Я еще учусь и иногда могу ошибаться, не верьте мне слепо👨‍🎓"
+        text += "\n\nP.S. Я еще учусь и иногда могу ошибаться, не верьте мне слепо👨‍🎓"
         await bot.send_message(chat_id=config.bot.group_id, text=text)
     except TelegramAPIError as e:
         logger.error("Не удалось отправить мудрость в беседу: %s", e)
