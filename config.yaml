@@ -6,6 +6,7 @@ db:
   table_users: "users"
   table_registrations: "registrations"
   table_days_off: "days_off"
+  table_wisdom: "wisdom"
 booking:
   window_days: 14
 time:
