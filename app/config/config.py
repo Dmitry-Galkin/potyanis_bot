@@ -22,6 +22,7 @@ class DataBaseSettings:
     table_users: str
     table_registrations: str
     table_days_off: str
+    table_wisdom: str
 
 
 @dataclass

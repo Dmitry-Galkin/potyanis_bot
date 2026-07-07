@@ -44,6 +44,8 @@ async def init_all_tables(db_config: DataBaseSettings) -> None:
             query_init_table_days_off,
             (db_config.table_days_off,),
         ),
+        # Таблица с мудростями.
+        (query_init_table_wisdom, (db_config.table_wisdom,)),
     ]:
         await init_table(func, *args, db_path=db_config.path)
 
@@ -140,6 +142,20 @@ def query_init_table_days_off(*args) -> str:
             date_off_start TEXT NOT NULL,
             date_off_end TEXT NOT NULL,
             is_actual BOOLEAN NOT NULL
+        )
+    """
+    return query
+
+
+def query_init_table_wisdom(*args) -> str:
+    """Запрос для создания таблицы с мудростями."""
+    # Чтобы потом не повторяться.
+    table = args[0]
+    query = f"""
+        CREATE TABLE IF NOT EXISTS {table} (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            text TEXT NOT NULL,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
         )
     """
     return query
