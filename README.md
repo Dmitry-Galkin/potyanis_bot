@@ -15,16 +15,14 @@ Telegram-бот для записи на занятия йогой: пользо
   - посмотреть записи на конкретную дату;
   - добавить отпуск;
   - удалить отпуск.
+- За 1ч до начала занятий приходит напоминание в личных сообщениях.
+- Раз в сутки бот присылает в общий чат йога-мудрость.
 ## Стек
 - Python 3.14
 - aiogram 3
 - SQLite (через `aiosqlite`)
-- pandas (для табличной обработки и форматирования данных)
 ## Требования
 - Python 3.14+
-- Telegram Bot Token
-- Telegram ID группы, в которой работают пользователи бота
-- Список Telegram ID админов
 ## Конфигурация
 ### 1) Переменные окружения (`.env`)
 Создайте файл `.env` в корне проекта:
@@ -32,40 +30,29 @@ Telegram-бот для записи на занятия йогой: пользо
 BOT_TOKEN=your_telegram_bot_token
 GROUP_ID=-1001234567890
 ADMIN_IDS=111111111,222222222
+DEEPSEEK_API_KEY=deepseek_api_key
 ```
 Где:
 - `BOT_TOKEN` — токен бота от BotFather.
 - `GROUP_ID` — id Telegram-группы (можно получить через команду `/get_chat_id`).
 - `ADMIN_IDS` — список id админов через запятую.
+- `DEEPSEEK_API_KEY` - api-ключ DeepSeek (можно использовать любую модель с *openai*-интрфейсом, только настройки проверить)
 ### 2) YAML-конфиг
 По умолчанию используется `config.yaml`:
 - `db.path` — путь к SQLite-базе (например, `data/yoga_classes`)
 - `booking.window_days` — горизонт генерации занятий на N дней вперед
 - `time.local_timezone` — локальная таймзона для отображения дат/времени
+- `redis/` - настройки redis
+- `reminder/` - настройки напоминаний о предстоящем занятии
+- `wisdom/` - параметры ежедневной йога-мудрости
+
 Для разработки есть `config_dev.yaml`.
-## Установка и запуск (локально)
-```bash
-python -m venv .venv
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
-# Linux/macOS
-source .venv/bin/activate
-pip install -r requirements.txt
-python main.py
-```
+
 При старте бот:
 - выставляет команды Telegram;
 - инициализирует таблицы в SQLite (если их нет);
 - запускает polling.
-## Запуск в Docker
-```bash
-docker build -t potyanis-bot .
-docker run --rm \
-  --env-file .env \
-  -v %cd%/data:/potyanis_bot/data \
-  potyanis-bot
-```
-Для Linux/macOS замените `%cd%` на `$(pwd)`.
+
 ## Команды бота
 ### Для пользователей
 - `/join` — записаться на занятие
@@ -78,6 +65,7 @@ docker run --rm \
 ### Для админов
 - `/admin` — открыть админ-панель
 - `/get_chat_id` — вывести id текущего чата (служебная команда)
+
 ## Структура проекта
 ```text
 app/
@@ -88,6 +76,8 @@ app/
     middlewares/    # Middleware (логирование, проброс config/bot)
     roles/          # Логика определения роли пользователя
     utils/          # Вспомогательные функции
+    scheduler/      # Планировщик
+    services/       # Сервисы
     interface/      # Регистрация bot-команд
   config/           # Загрузка и схемы конфигурации
   db/               # Слой работы с SQLite и схема таблиц
@@ -95,6 +85,7 @@ main.py             # Точка входа
 config.yaml         # Основной runtime-конфиг
 config_dev.yaml     # Конфиг для разработки
 ```
+
 ## Примечания
 - База создается автоматически при первом запуске.
 - Пользователь считается `USER`, если состоит в указанной группе.
