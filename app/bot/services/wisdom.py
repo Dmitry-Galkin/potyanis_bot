@@ -1,19 +1,23 @@
+import logging
 import random
 
 from openai import AsyncOpenAI
 
 from app.config import Config
+from app.db import table_select
+
+logger = logging.getLogger(__name__)
 
 # (Описание категории, вес): чем больше вес — тем чаще выпадает.
 CATEGORIES = [
     (
         "история и происхождение асаны: "
         "что означает ее название на санскрите, откуда она пошла",
-        3,
+        2,
     ),
     (
         "любопытный исторический факт о йоге, ее школах или традициях",
-        3,
+        2,
     ),
     (
         "значение санскритского термина из йоги и как он раскрывает суть практики",
@@ -39,9 +43,9 @@ CATEGORIES = [
 ]
 # Системный промпт.
 SYSTEM_PROMPT = (
-    "Ты — знающий и увлеченный преподаватель йоги, "
+    "Ты - знающий и увлеченный преподаватель йоги, "
     "который ведет образовательный канал. "
-    "Пишешь живо, по-русски, без пафоса и заезженных цитат."
+    "Пишешь живо, увлекательно, интересно, по-русски, без пафоса и заезженных цитат. "
 )
 
 
@@ -52,7 +56,7 @@ def _pick_category() -> str:
     return random.choices(population, weights=weights, k=1)[0]
 
 
-def _build_prompt() -> str:
+async def _build_prompt(config: Config) -> str:
     """Промпт."""
     category = _pick_category()
     prompt = (
@@ -64,7 +68,39 @@ def _build_prompt() -> str:
         "формулируй общее и без ложной точности;\n"
         "- это пост для практикующих йогу, которые хотят узнавать новое.\n\n"
     )
+    recent_wisdoms = await _get_recent_wisdoms(config)
+    if recent_wisdoms:
+        joined = "\n".join(f"- {w[:150]}" for w in recent_wisdoms)
+        prompt += f"Недавно уже были посты на эти темы, выбери другую:\n{joined}\n\n"
+        prompt += "Теперь напиши новый пост с учетом вышеизложенного. "
+        prompt += (
+            "Выведи только сам текст поста — без вступлений, пояснений, "
+            "заголовков и фраз вроде «вот текст». Начинай сразу с содержания."
+        )
     return prompt
+
+
+async def _get_recent_wisdoms(config: Config, n_last_wisdoms: int = 15) -> list[str]:
+    # Загрузка последних мудростей из БД.
+    try:
+        query = f"""
+            SELECT 
+                created_at, text
+            FROM
+                {config.db.table_wisdom}
+            ORDER BY 
+                created_at DESC
+            LIMIT ?
+        """
+        recent_wisdoms_df = await table_select(
+            db_path=config.db.path,
+            query=query,
+            parameters=(n_last_wisdoms,),
+        )
+        return recent_wisdoms_df.text.tolist()
+    except Exception as e:
+        logger.error(e)
+        return []
 
 
 async def _generate_wisdom(config: Config, prompt: str) -> str:
@@ -84,7 +120,7 @@ async def _generate_wisdom(config: Config, prompt: str) -> str:
 
 async def generate_wisdom(config: Config) -> str:
     """Сгенерировать текст мудрости."""
-    prompt = _build_prompt()
+    prompt = await _build_prompt(config)
     return await _generate_wisdom(config, prompt)
 
 
