@@ -5,6 +5,7 @@ from aiogram.exceptions import TelegramAPIError
 
 from app.bot.services import generate_wisdom
 from app.config import Config
+from app.db import table_insert
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +23,14 @@ async def send_daily_wisdom(bot: Bot, config: Config) -> None:
         text = "🧘‍♂️Время для интересных фактов или просто пофилософствовать\n\n"
         text += wisdom_text
         text += "\n\nP.S. Я еще учусь и иногда могу ошибаться, не верьте мне слепо👨‍🎓"
-        await bot.send_message(chat_id=config.bot.group_id, text=text)
+        await bot.send_message(
+            chat_id=config.bot.group_id, text=text, parse_mode="markdown"
+        )
+        # Запись мудрости в БД.
+        await table_insert(
+            db_path=config.db.path,
+            table=config.db.table_wisdom,
+            values={"text": wisdom_text},
+        )
     except TelegramAPIError as e:
         logger.error("Не удалось отправить мудрость в беседу: %s", e)
