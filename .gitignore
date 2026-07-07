@@ -4,6 +4,5 @@
 .idea
 __pycache__/
 *.tar
-yoga_classes
-yoga_classes_dev
+yoga_classes*
 docker-instructions.txt
