@@ -20,6 +20,7 @@ def setup_scheduler(bot: Bot, config: Config) -> AsyncIOScheduler:
     scheduler.add_job(
         send_daily_wisdom,
         trigger="cron",
+        day_of_week="sat,sun",
         hour=config.wisdom.send_hour,
         minute=config.wisdom.send_minute,
         timezone=config.time.local_timezone,
