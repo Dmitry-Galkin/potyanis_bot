@@ -32,15 +32,15 @@ def _default(o):
 
 # Логирование действий пользователей в терминал: время, id, first_name, last_name, username, команда.
 logging.basicConfig(
-    level=logging.ERROR,
+    level=logging.DEBUG,
     format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
     stream=sys.stdout,
 )
 logger_actions = logging.getLogger("user_actions")
-logger_actions.setLevel(logging.ERROR)
+logger_actions.setLevel(logging.DEBUG)
 
-config = load_config(path_env=".env", path_yaml="config.yaml")
+config = load_config(path_env=".env.dev", path_yaml="config_dev.yaml")
 BOT_TOKEN = config.bot.token
 
 redis = Redis(host=config.redis.host, port=config.redis.port)
